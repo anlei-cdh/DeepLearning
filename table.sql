@@ -18,12 +18,13 @@ CREATE TABLE `dl_detection_data` (
   PRIMARY KEY (`id`)
 ) ENGINE=INNODB DEFAULT CHARSET=utf8;
 
-CREATE TABLE `dl_poem_data` (
-  `id` BIGINT(20) NOT NULL,
+CREATE TABLE `dl_poetize_data` (
+  `id` INT(11) NOT NULL,
   `content` VARCHAR(512) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=INNODB DEFAULT CHARSET=utf8;
 
-INSERT INTO dl_poem_data(`id`,`content`) VALUES(1,'飞伐三千里，随明水一曾。不觉心间剡，人看江上春。舍今三十家，林下九比边。九白通千里，潇始依旧山。');
-INSERT INTO dl_poem_data(`id`,`content`) VALUES(2,'飞与便恋去，依旧翠青钟。雨涉微鸟起，僧多岸不枯。马于规涛谓，沙虎箕零群。应有门前化，堪闻逐遇开。');
-INSERT INTO dl_poem_data(`id`,`content`) VALUES(3,'');
+INSERT INTO dl_poetize_data(`id`,`content`) VALUES(1,'天芋仙幸住，停经穴黠魂。野稀和必上，出水寺生山。闻舍见朝帝，昨夜是且忧。树栅当寒减，亲风只融称。');
+INSERT INTO dl_poetize_data(`id`,`content`) VALUES(2,'落流雁去外，春风枝树新。冥心凝开每，绕乐世钓心。叶拙容归弓，春风水上闲。槛来何处宿，行步威入瀛。');
+INSERT INTO dl_poetize_data(`id`,`content`) VALUES(3,'飞毛惆仙处，晚更还分明。薛远春经位，春生积夜应。处多中更老，遥带岸莺尘。孤彩法以雨，星桥及有泉。');
+UPDATE `dl_poetize_data` SET content = '' WHERE id = 3;
