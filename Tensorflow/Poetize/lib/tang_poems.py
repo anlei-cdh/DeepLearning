@@ -128,7 +128,7 @@ def check_poem(poem_content):
                 if(word_len == 0): # 第一句的长度赋值
                     word_len = len(s)
                 print(index, " - ", word_len, " - ", len(s))
-                if(word_len > 20 or word_len < 11): # 每句诗的长度在11-19之间
+                if(word_len != 11): # 每句诗的长度必须是11
                     return False
                 if(word_len != len(s) and index < 5): # 每句诗的长度必须相等，最后一句是空字符串不需要比对
                     return False
@@ -163,7 +163,7 @@ def pretty_print_poem(poem):
             line = s + '。'
             poem_result += line
 
-    sql = "UPDATE dl_poem_data SET content = '%s' WHERE id = 3" % (poem_result)
+    sql = "UPDATE dl_poetize_data SET content = '%s' WHERE id = 3" % (poem_result)
     dbHelper.runSql(sql)
     print("result: ",poem_result)
 
