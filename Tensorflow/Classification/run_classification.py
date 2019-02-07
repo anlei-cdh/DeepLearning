@@ -66,7 +66,7 @@ def create_graph():
 hashHelper = hashUtil.HashUtil()
 dbHelper = dbUtil.DBUtil()
 
-def run_image_classify(image_name):
+def run_image_classify(image_id, image_name):
   image_path = "image/" + image_name
   if not tf.gfile.Exists(image_path):
     tf.logging.fatal('File does not exist %s', image_path)
@@ -89,15 +89,22 @@ def run_image_classify(image_name):
       len = classify_string.__len__()
       classify = classify_string[len - 1]
       type = dictUtil.get_classify_dict(classify)
-      hash_id = hashHelper.getHash(image_name)
-      sql = "INSERT INTO dl_classify_data(`hash_id`,`name`,`type`,`score`) VALUES(%d,'%s','%s',%f) " \
+      # hash_id = hashHelper.getHash(image_name)
+      sql = "INSERT INTO dl_classify_data(`id`,`name`,`type`,`score`) VALUES(%d,'%s','%s',%f) " \
             "ON DUPLICATE KEY UPDATE `name` = VALUES(`name`),`type` = VALUES(`type`),`score` = VALUES(`score`)" \
-            % (hash_id, image_name, type, score)
+            % (image_id, image_name, type, score)
       list.append(sql)
-      print(hash_id,' - ',image_name,' - ',type,' - ',score)
+      print(image_id,' - ',image_name,' - ',type,' - ',score)
     dbHelper.runSql(list)
 
 if __name__ == '__main__':
-  images = ['1.jpg', '2.jpg', '3.jpg', '4.jpg']
-  for image_name in images:
-    run_image_classify(image_name)
+    images = [
+        {'id': 1, 'name': '1.jpg'},
+        {'id': 2, 'name': '2.jpg'},
+        {'id': 3, 'name': '3.jpg'},
+        {'id': 4, 'name': '4.jpg'}
+    ]
+    for img in images:
+        image_id = img["id"]
+        image_name = img["name"]
+        run_image_classify(image_id, image_name)

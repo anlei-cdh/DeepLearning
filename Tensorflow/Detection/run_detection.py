@@ -23,7 +23,7 @@ NETS = {'vgg16': ('vgg16_faster_rcnn_iter_70000.ckpt',), 'res101': ('res101_fast
 DATASETS = {'pascal_voc': ('voc_2007_trainval',), 'pascal_voc_0712': ('voc_2007_trainval+voc_2012_trainval',)}
 
 
-def vis_detections(im, class_name, dets, image_name, thresh=0.5):
+def vis_detections(im, class_name, dets, image_id, image_name, thresh=0.5):
     inds = np.where(dets[:, -1] >= thresh)[0]
     if len(inds) == 0:
         return
@@ -43,16 +43,16 @@ def vis_detections(im, class_name, dets, image_name, thresh=0.5):
         width = bbox[2] - bbox[0]
         heigth = bbox[3] - bbox[1]
 
-        sql = "INSERT INTO dl_detection_data(`name`,`top`,`left`,`width`,`height`,`type`,`score`) VALUES('%s',%f,%f,%f,%f,'%s',%f)" \
-              % (image_name, point_y, point_x, width, heigth, type, score)
+        sql = "INSERT INTO dl_detection_data(`id`,`name`,`top`,`left`,`width`,`height`,`type`,`score`) VALUES(%d,'%s',%f,%f,%f,%f,'%s',%f)" \
+              % (image_id, image_name, point_y, point_x, width, heigth, type, score)
         list.append(sql)
-        print(point_y, point_x, width, heigth, image_name, type, score)
+        print(image_id, point_y, point_x, width, heigth, image_name, type, score)
 
     dbHelper = dbUtil.DBUtil()
     dbHelper.runSql(list)
 
 
-def demo(sess, net, image_name):
+def demo(sess, net, image_id, image_name):
     im_file = os.path.join(cfg.FLAGS2["data_dir"], 'image', image_name)
     im = cv2.imread(im_file)
 
@@ -72,7 +72,7 @@ def demo(sess, net, image_name):
                           cls_scores[:, np.newaxis])).astype(np.float32)
         keep = nms(dets, NMS_THRESH)
         dets = dets[keep, :]
-        vis_detections(im, cls, dets, image_name, thresh=CONF_THRESH)
+        vis_detections(im, cls, dets, image_id, image_name, thresh=CONF_THRESH)
 
 
 def parse_args():
@@ -113,15 +113,21 @@ if __name__ == '__main__':
     saver = tf.train.Saver()
     saver.restore(sess, tfmodel)
 
-    im_names = ['1.jpg','2.jpg']
+    images = [
+        {'id': 1, 'name': '1.jpg'},
+        {'id': 2, 'name': '2.jpg'}
+    ]
 
     sqls = []
-    for im_name in im_names:
-        sqls.append("DELETE FROM `dl_detection_data` WHERE `name` = '%s'" % im_name)
+    for img in images:
+        image_id = img["id"]
+        sqls.append("DELETE FROM `dl_detection_data` WHERE `id` = '%s'" % image_id)
     dbHelper = dbUtil.DBUtil()
     dbHelper.runSql(sqls)
 
-    for im_name in im_names:
-        demo(sess, net, im_name)
+    for img in images:
+        image_id = img["id"]
+        image_name = img["name"]
+        demo(sess, net, image_id, image_name)
 
     plt.show()

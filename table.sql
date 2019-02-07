@@ -1,13 +1,14 @@
 CREATE TABLE `dl_classify_data` (
-  `hash_id` BIGINT(20) NOT NULL,
+  `id` INT(11) NOT NULL,
   `name` VARCHAR(32) NOT NULL,
   `type` VARCHAR(32) NOT NULL,
   `score` FLOAT(11) NOT NULL,
-  PRIMARY KEY (`hash_id`)
+  PRIMARY KEY (`id`)
 ) ENGINE=INNODB DEFAULT CHARSET=utf8;
 
 CREATE TABLE `dl_detection_data` (
-  `id` INT(11) NOT NULL AUTO_INCREMENT,
+  `autoid` INT(11) NOT NULL AUTO_INCREMENT,
+  `id` INT(11) NOT NULL,
   `name` VARCHAR(32) NOT NULL,
   `top` FLOAT(11) NOT NULL,
   `left` FLOAT(11) NOT NULL,
@@ -15,7 +16,7 @@ CREATE TABLE `dl_detection_data` (
   `height` FLOAT(11) NOT NULL,
   `type` VARCHAR(32) NOT NULL,
   `score` FLOAT(32) NOT NULL,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`autoid`)
 ) ENGINE=INNODB DEFAULT CHARSET=utf8;
 
 CREATE TABLE `dl_poetize_data` (
