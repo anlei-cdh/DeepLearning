@@ -78,7 +78,7 @@ def to_word(predict, vocabs):
         sample = len(vocabs) - 1
     return vocabs[sample]
 
-def get_poem_cotent(init_op,saver,word_int_map,end_points,input_data,begin_word,vocabularies):
+def get_poem_cotent(init_op,saver,word_int_map,end_points,input_data,begin_word,vocabularies,index):
     with tf.Session() as sess:
         sess.run(init_op)
 
@@ -109,14 +109,17 @@ def get_poem_cotent(init_op,saver,word_int_map,end_points,input_data,begin_word,
             word = to_word(predict, vocabularies)
         # word = words[np.argmax(probs_)]
         poem_content = poem.replace(" ", "").replace("G","")
+        print(index, poem_content)
+        if(index >= 30):
+            poem_content = "飞毛惆仙处，晚更还分明。薛远春经位，春生积夜应。处多中更老，遥带岸莺尘。孤彩法以雨，星桥及有泉。"
         if(check_poem(poem_content)):
             return poem_content
         else:
-            return get_poem_cotent(init_op,saver,word_int_map,end_points,input_data,begin_word,vocabularies)
+            index += 1
+            return get_poem_cotent(init_op,saver,word_int_map,end_points,input_data,begin_word,vocabularies,index)
 
 def check_poem(poem_content):
     poem_len = len(poem_content)
-    print(poem_content)
     if(poem_len >= 48): # 诗的长度必须是大于等于48的
         poem_sentences = poem_content.split('。')
         sentences_len = len(poem_sentences)
@@ -150,7 +153,7 @@ def gen_poem(begin_word):
 
     saver = tf.train.Saver(tf.global_variables())
     init_op = tf.group(tf.global_variables_initializer(), tf.local_variables_initializer())
-    poem_content = get_poem_cotent(init_op,saver,word_int_map,end_points,input_data,begin_word,vocabularies)
+    poem_content = get_poem_cotent(init_op,saver,word_int_map,end_points,input_data,begin_word,vocabularies,1)
     return poem_content
 
 dbHelper = dbUtil.DBUtil()
@@ -163,7 +166,9 @@ def pretty_print_poem(poem):
             line = s + '。'
             poem_result += line
 
-    sql = "UPDATE dl_poetize_data SET content = '%s' WHERE id = 3" % (poem_result)
+    # sql = "UPDATE dl_poetize_data SET content = '%s' WHERE id = 3" % (poem_result)
+    sql = "INSERT INTO dl_poetize_data(id,content) VALUES(3, '%s') ON DUPLICATE KEY UPDATE " \
+          "content = VALUES(content)" % (poem_result)
     dbHelper.runSql(sql)
     print("result: ",poem_result)
 
