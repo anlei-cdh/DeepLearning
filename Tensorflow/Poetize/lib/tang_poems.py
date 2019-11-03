@@ -110,7 +110,7 @@ def get_poem_cotent(init_op,saver,word_int_map,end_points,input_data,begin_word,
         # word = words[np.argmax(probs_)]
         poem_content = poem.replace(" ", "").replace("G","")
         print(index, poem_content)
-        if(index >= 30):
+        if(index >= 50):
             poem_content = "飞毛惆仙处，晚更还分明。薛远春经位，春生积夜应。处多中更老，遥带岸莺尘。孤彩法以雨，星桥及有泉。"
         if(check_poem(poem_content)):
             return poem_content
